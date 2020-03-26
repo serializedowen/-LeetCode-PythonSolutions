@@ -154,17 +154,6 @@ class FizzBuzz2(object):
 
 
 
-def profiled(threads):
-    before = datetime.now()
-    for thread in threads:
-        thread.start()
-    while 1:
-        if threads[0].is_alive() == False and threads[1].is_alive() == False and threads[2].is_alive() == False and \
-                threads[3].is_alive() == False:
-            print(datetime.now() - before)
-            break
-
-
 def threadGen(fizzbuzz):
     threads = [threading.Thread(name='buzz', target=fizzbuzz.buzz, args=[lambda: print('buzz')]),
                threading.Thread(name='fizz', target=fizzbuzz.fizz, args=[lambda: print('fizz')]),
@@ -178,6 +167,7 @@ def threadGen(fizzbuzz):
 
 if __name__ == '__main__':
     from datetime import datetime
+    from .util import profiled
 
     threads = threadGen(FizzBuzz(15))
     profiled(threads)
