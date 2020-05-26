@@ -6,12 +6,63 @@ import math
 
 class Solution:
 
+    # Problem 39
+    def combinationSum(self, candidates: List[int], target: int) -> List[List[int]]:
+        candidates.sort()
+        result = []
+
+        def dfs(target, result, candidates, built, ind):
+            if target < 0:
+                return
+            elif target == 0:
+                result.append(built)
+                return
+            else:
+                for i in range(ind, len(candidates)):
+                    dfs(target - candidates[i], result, candidates, built + [candidates[i]], i)
+
+        dfs(target, result, candidates, [], 0)
+
+        return result
+
+    # Problem 40
+    def combinationSum2(self, candidates: List[int], target: int) -> List[List[int]]:
+        candidates.sort()
+
+        dp = [set() for i in range(0, target + 1)]
+
+        for num in range(0, target + 1):
+            j
+
+        return dp[-1]
+
+    def findMin(self, nums: List[int]) -> int:
+
+        # O(n)
+        if len(nums) <= 1:
+            return nums[0]
+        for i in range(len(nums) - 1):
+            if nums[i] > nums[i + 1]:
+                return nums[i + 1]
+
+        return nums[0]
+
+        # start = 0
+        # end = len(nums) - 1
+        # while start < end:
+        #     ind = start + (end - start) // 2
+        #
+        #     if nums[ind] > nums[end]:
+        #         start = ind + 1
+        #     else:
+        #         end = ind
+        #
+        # return nums[start]
+
     # Problem 313
     def nthSuperUglyNumber(self, n: int, primes: List[int]) -> int:
 
-
         pass
-
 
     # Problem 347    TODO
     def topKFrequent(self, nums: List[int], k: int) -> List[int]:
@@ -20,7 +71,7 @@ class Solution:
         ret = []
         min = len(nums)
         count = 0
-        minVal =
+        minVal = -1
         for i in range(0, len(nums)):
             if i == len(nums) - 1:
                 if count >= min or len(ret) < k:
@@ -28,7 +79,6 @@ class Solution:
                         ret.remove(minVal)
                     ret.append(nums[i])
                 break
-
 
             count += 1
 
@@ -50,12 +100,6 @@ class Solution:
 
         return ret
 
-
-
-
-
-
-
     # Problem 309
     def maxProfit(self, prices: List[int]) -> int:
         if not len(prices): return 0
@@ -68,7 +112,6 @@ class Solution:
 
         return dp[len(prices) - 1][1]
 
-
     # Problem 343
     def integerBreak(self, n: int) -> int:
         res = 1
@@ -79,7 +122,6 @@ class Solution:
             n -= 3
         res *= n
         return res
-
 
     # Problem 547
     def findCircleNum(self, M: List[List[int]]) -> int:
@@ -149,355 +191,392 @@ class Solution:
 
         return overflow
 
+    # Problem 552
+    def checkRecord(self, n: int) -> int:
+        fib = [[0, 0], [3, 2], [8, 4], [19, 7]]
+        fib.extend([[0, 0] for i in range(0, n - 3)])
 
-# Problem 552
-def checkRecord(self, n: int) -> int:
-    fib = [[0, 0], [3, 2], [8, 4], [19, 7]]
-    fib.extend([[0, 0] for i in range(0, n - 3)])
+        for i in range(4, n + 1):
+            fib[i][1] = 2 * fib[i - 1][1] - fib[i - 4][1]
+            fib[i][0] = (3 * fib[i - 1][0]) - fib[i - 4][0] * 2 - fib[i - 2][1] * (i - 1)
 
-    for i in range(4, n + 1):
-        fib[i][1] = 2 * fib[i - 1][1] - fib[i - 4][1]
-        fib[i][0] = (3 * fib[i - 1][0]) - fib[i - 4][0] * 2 - fib[i - 2][1] * (i - 1)
+        print(fib)
 
-    print(fib)
+        return fib[n][0]
 
-    return fib[n][0]
+    # Problem 551
+    def checkRecord2(self, s: str) -> bool:
+        cA = 0
 
+        for i, c in enumerate(s):
+            if c == 'A':
+                cA += 1
 
-# Problem 551
-def checkRecord2(self, s: str) -> bool:
-    cA = 0
+            if c == 'L' and i >= 2:
+                if c == s[i - 1] and c == s[i - 2]:
+                    return False
 
-    for i, c in enumerate(s):
-        if c == 'A':
-            cA += 1
+        return cA < 2
 
-        if c == 'L' and i >= 2:
-            if c == s[i - 1] and c == s[i - 2]:
-                return False
+    # Problem 645
+    def findErrorNums(self, nums: List[int]) -> List[int]:
+        actual = sum(nums)
+        expected = int(len(nums) * (len(nums) + 1) / 2)
+        dup = actual - sum(set(nums))
+        return [dup, dup + expected - actual]
 
-    return cA < 2
+    # Problem 492
+    def constructRectangle(self, area: int) -> List[int]:
+        ret = [area, 1]
+        for i in range(math.floor(math.sqrt(area)), 0, -1):
+            if area % i == 0:
+                return [int(area / i), i]
 
+        return ret
 
-# Problem 645
-def findErrorNums(self, nums: List[int]) -> List[int]:
-    actual = sum(nums)
-    expected = int(len(nums) * (len(nums) + 1) / 2)
-    dup = actual - sum(set(nums))
-    return [dup, dup + expected - actual]
+    # dp(i) represents result of "i" bits number: "1000...". It means the count of all valid numbers smaller than this "100...", including those starting with "0". We can divide this into two sub-problems: Results with first bit being "1", can be represented by dp(i-2) Results with first bit being "0", can be represented by dp(i-1) "first" here means the "i"th bit from left to right So we have: dp(i)=dp(i-1)+dp(i-2) This is a fibonacci number.
+    # However, this only gives us result of 2^n number. How to find result smaller than any "num"? If the "num" starts with "11", then dp(n) is its result. If "num" starts with "10", then dp(n-1)+next is its result, where "next" is the result of next sub num starting with "1".
 
+    # Problem 600  DP
+    def findIntegers(self, num: int) -> int:
+        num = bin(num + 1)[2:]
+        n = len(num)
+        fibo = [1, 2]
+        for _ in range(n - 1):
+            fibo.append(fibo[-1] + fibo[-2])
 
-# Problem 492
-def constructRectangle(self, area: int) -> List[int]:
-    ret = [area, 1]
-    for i in range(math.floor(math.sqrt(area)), 0, -1):
-        if area % i == 0:
-            return [int(area / i), i]
+        res = 0
+        for i in range(n):
+            v = num[i:i + 2]
+            if v == '11':
+                res += fibo[n - i]
+                break
+            elif v == '10':
+                res += fibo[n - i - 1]
+            elif v == '1':
+                res += 1
+        return res
 
-    return ret
+        # if num < 3:
+        #     return num + 1
+        #
+        # ret = [True for x in range (0, num + 1)]
+        # occur = 0
+        # curPower = 2
+        #
+        #
+        # for x in range (0, num+ 1):
+        #     if curPower * 2 <= x:
+        #         curPower *= 2
+        #
+        #     ret[x] = (x == curPower or x == curPower * 2) or (ret[curPower] and ret[x - curPower] and (x - curPower) < (curPower / 2))
+        #
+        #     if ret[x]:
+        #         occur += 1
+        # return occur
 
+    # Problem 474  DP
+    def findMaxForm(self, strs: List[str], m: int, n: int) -> int:
+        dp = [[0] * (n + 1) for _ in range(m + 1)]
 
-# dp(i) represents result of "i" bits number: "1000...". It means the count of all valid numbers smaller than this "100...", including those starting with "0". We can divide this into two sub-problems: Results with first bit being "1", can be represented by dp(i-2) Results with first bit being "0", can be represented by dp(i-1) "first" here means the "i"th bit from left to right So we have: dp(i)=dp(i-1)+dp(i-2) This is a fibonacci number.
-# However, this only gives us result of 2^n number. How to find result smaller than any "num"? If the "num" starts with "11", then dp(n) is its result. If "num" starts with "10", then dp(n-1)+next is its result, where "next" is the result of next sub num starting with "1".
+        for s in strs:
+            zeros = s.count('0')
+            ones = len(s) - zeros
 
-# Problem 600  DP
-def findIntegers(self, num: int) -> int:
-    num = bin(num + 1)[2:]
-    n = len(num)
-    fibo = [1, 2]
-    for _ in range(n - 1):
-        fibo.append(fibo[-1] + fibo[-2])
+            for i in range(m, zeros - 1, -1):
+                for j in range(n, ones - 1, -1):
+                    if i >= zeros and j >= ones:
+                        dp[i][j] = max(dp[i - zeros][j - ones] + 1, dp[i][j])
 
-    res = 0
-    for i in range(n):
-        v = num[i:i + 2]
-        if v == '11':
-            res += fibo[n - i]
-            break
-        elif v == '10':
-            res += fibo[n - i - 1]
-        elif v == '1':
-            res += 1
-    return res
+        print(dp)
+        return dp[-1][-1]
 
-    # if num < 3:
-    #     return num + 1
-    #
-    # ret = [True for x in range (0, num + 1)]
-    # occur = 0
-    # curPower = 2
-    #
-    #
-    # for x in range (0, num+ 1):
-    #     if curPower * 2 <= x:
-    #         curPower *= 2
-    #
-    #     ret[x] = (x == curPower or x == curPower * 2) or (ret[curPower] and ret[x - curPower] and (x - curPower) < (curPower / 2))
-    #
-    #     if ret[x]:
-    #         occur += 1
-    # return occur
+    # Problem 448
+    def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
+        output = []
+        for x in nums:
+            y = abs(x)
+            nums[y - 1] = 0 - abs(nums[y - 1])
 
+        r = []
+        for i, x in enumerate(nums):
+            if x > 0:
+                r.append(i + 1)
+        return r
 
-# Problem 474  DP
-def findMaxForm(self, strs: List[str], m: int, n: int) -> int:
-    dp = [[0] * (n + 1) for _ in range(m + 1)]
+    # Problem 482
+    def licenseKeyFormatting(self, S: str, K: int) -> str:
+        S = S.replace("-", "").upper()
 
-    for s in strs:
-        zeros = s.count('0')
-        ones = len(s) - zeros
+        words = []
 
-        for i in range(m, zeros - 1, -1):
-            for j in range(n, ones - 1, -1):
-                if i >= zeros and j >= ones:
-                    dp[i][j] = max(dp[i - zeros][j - ones] + 1, dp[i][j])
+        start = len(S) % K
+        end = 0
 
-    print(dp)
-    return dp[-1][-1]
+        if S[:start]:
+            words.append(S[:start])
 
+        while end < K * (len(S) // K):
+            end = start + K
+            if S[start:end]:
+                words.append(S[start:end])
+            start = end
 
-# Problem 448
-def findDisappearedNumbers(self, nums: List[int]) -> List[int]:
-    output = []
-    for x in nums:
-        y = abs(x)
-        nums[y - 1] = 0 - abs(nums[y - 1])
-
-    r = []
-    for i, x in enumerate(nums):
-        if x > 0:
-            r.append(i + 1)
-    return r
-
-
-# Problem 482
-def licenseKeyFormatting(self, S: str, K: int) -> str:
-    S = S.replace("-", "").upper()
-
-    words = []
-
-    start = len(S) % K
-    end = 0
-
-    if S[:start]:
-        words.append(S[:start])
-
-    while end < K * (len(S) // K):
-        end = start + K
-        if S[start:end]:
-            words.append(S[start:end])
-        start = end
-
-    return '-'.join(words)
+        return '-'.join(words)
 
     # Problem 433
+    def minMutation(self, start: str, end: str, bank: List[str]) -> int:
+        list = []
+        list.append((start, 0))
 
+        def adjacent(a, b):
+            count = 0
+            for (i, c) in enumerate(a):
+                if b[i] != c:
+                    count = count + 1
 
-def minMutation(self, start: str, end: str, bank: List[str]) -> int:
-    list = []
-    list.append((start, 0))
+                if count > 1:
+                    return False
 
-    def adjacent(a, b):
-        count = 0
-        for (i, c) in enumerate(a):
-            if b[i] != c:
-                count = count + 1
+            return count == 1
 
-            if count > 1:
-                return False
+        while len(list):
+            a, level = list.pop()
 
-        return count == 1
+            removed = []
+            for (i, s) in enumerate(bank):
+                if adjacent(s, a):
+                    if s == end:
+                        return level + 1
+                    list.append((s, level + 1))
+                    removed.append(s)
+                if a == end:
+                    return level
 
-    while len(list):
-        a, level = list.pop()
+                if i == len(bank) - 1:
+                    for i in removed:
+                        bank.remove(i)
 
-        removed = []
-        for (i, s) in enumerate(bank):
-            if adjacent(s, a):
-                if s == end:
-                    return level + 1
-                list.append((s, level + 1))
-                removed.append(s)
-            if a == end:
-                return level
+                    removed = []
 
-            if i == len(bank) - 1:
-                for i in removed:
-                    bank.remove(i)
+        return -1
 
-                removed = []
+    # Problem 416
+    def canPartition(self, nums: List[int]) -> bool:
+        goal = sum(nums) / 2
+        if goal != math.floor(goal): return False
+        nums.sort(reverse=True)
 
-    return -1
+        def help(curr, remains):
+            for i in range(0, len(remains)):
+                if curr + remains[i] > goal: return False
+                if curr + remains[i] == goal: return True
+                if help(curr + remains[i], remains[:i] + remains[i + 1:]):
+                    return True
 
+        return help(0, nums)
 
-# Problem 416
-def canPartition(self, nums: List[int]) -> bool:
-    goal = sum(nums) / 2
-    if goal != math.floor(goal): return False
-    nums.sort(reverse=True)
+    # Problem 424
+    def characterReplacement(self, s: str, k: int) -> int:
+        if len(s) == 0:
+            return 0
 
-    def help(curr, remains):
-        for i in range(0, len(remains)):
-            if curr + remains[i] > goal: return False
-            if curr + remains[i] == goal: return True
-            if help(curr + remains[i], remains[:i] + remains[i + 1:]):
-                return True
+        counts = {}
+        curMax, start = s[0], 0
+        for i, c in enumerate(s):
+            counts[c] = counts.get(c, 0) + 1
+            if counts[c] > counts[curMax] or (counts[c] == counts[curMax] and curMax == s[start]):
+                curMax = c
+            flips = i - start + 1 - counts[curMax]
+            if flips > k:
+                counts[s[start]] -= 1
+                start += 1
+        return len(s) - start
 
-    return help(0, nums)
+    # Problem 48
+    def rotate(self, matrix: List[List[int]]) -> None:
+        last = len(matrix) - 1
+        for r in range(last):
+            for c in range(r, last - r):
+                matrix[r][c], matrix[last - c][r], matrix[last - r][last - c], matrix[c][last - r] = matrix[last - c][
+                                                                                                         r], \
+                                                                                                     matrix[last - r][
+                                                                                                         last - c], \
+                                                                                                     matrix[c][
+                                                                                                         last - r], \
+                                                                                                     matrix[r][c]
+        return matrix
 
+    def firstMissingPositive(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        arr = [None] * len(nums)
 
-# Problem 424
-def characterReplacement(self, s: str, k: int) -> int:
-    if len(s) == 0:
-        return 0
+        for i in range(len(nums)):
+            if nums[i] > 0 and nums[i] <= len(nums):
+                arr[nums[i] - 1] = True
 
-    counts = {}
-    curMax, start = s[0], 0
-    for i, c in enumerate(s):
-        counts[c] = counts.get(c, 0) + 1
-        if counts[c] > counts[curMax] or (counts[c] == counts[curMax] and curMax == s[start]):
-            curMax = c
-        flips = i - start + 1 - counts[curMax]
-        if flips > k:
-            counts[s[start]] -= 1
-            start += 1
-    return len(s) - start
+        print(arr)
+        for i in range(len(nums)):
+            if arr[i] != True:
+                return i + 1
 
+        return len(nums) + 1
 
-# Problem 48
-def rotate(self, matrix: List[List[int]]) -> None:
-    last = len(matrix) - 1
-    for r in range(last):
-        for c in range(r, last - r):
-            matrix[r][c], matrix[last - c][r], matrix[last - r][last - c], matrix[c][last - r] = matrix[last - c][
-                                                                                                     r], \
-                                                                                                 matrix[last - r][
-                                                                                                     last - c], \
-                                                                                                 matrix[c][
-                                                                                                     last - r], \
-                                                                                                 matrix[r][c]
-    return matrix
+    def myPow(self, x: float, n: int) -> float:
+        if x == 1 or x == 0:
+            return x
 
+        if n == 0:
+            return 1
 
-def firstMissingPositive(self, nums):
-    """
-    :type nums: List[int]
-    :rtype: int
-    """
-    arr = [None] * len(nums)
+        if n < 0:
+            x = 1 / x
+            n = -n
 
-    for i in range(len(nums)):
-        if nums[i] > 0 and nums[i] <= len(nums):
-            arr[nums[i] - 1] = True
+        m = n / 2
 
-    print(arr)
-    for i in range(len(nums)):
-        if arr[i] != True:
-            return i + 1
+        if abs(n) == 1:
+            return x
 
-    return len(nums) + 1
+        if int(m) + int(m) == n:
+            return self.myPow(x * x, n / 2)
+        else:
+            return self.myPow(x * x, math.floor(n / 2)) * x
 
+    def longestCommonPrefix(self, strs) -> str:
+        index = 1
+        if len(strs) == 0:
+            return ''
 
-def myPow(self, x: float, n: int) -> float:
-    if x == 1 or x == 0:
-        return x
+        while 1:
+            prefix = strs[0][:index]
+            eject = False
+            for str in strs:
 
-    if n == 0:
-        return 1
+                if str[:index] == '':
+                    return ''
+                if str[:index] != prefix:
+                    eject = True
+                    break
 
-    if n < 0:
-        x = 1 / x
-        n = -n
-
-    m = n / 2
-
-    if abs(n) == 1:
-        return x
-
-    if int(m) + int(m) == n:
-        return self.myPow(x * x, n / 2)
-    else:
-        return self.myPow(x * x, math.floor(n / 2)) * x
-
-
-def longestCommonPrefix(self, strs) -> str:
-    index = 1
-    if len(strs) == 0:
-        return ''
-
-    while 1:
-        prefix = strs[0][:index]
-        eject = False
-        for str in strs:
-
-            if str[:index] == '':
-                return ''
-            if str[:index] != prefix:
-                eject = True
+            if eject:
                 break
 
-        if eject:
-            break
+            if index > len(strs[0]):
+                break
+            index = index + 1
 
-        if index > len(strs[0]):
-            break
-        index = index + 1
+        return strs[0][:index - 1]
 
-    return strs[0][:index - 1]
+    def findMedianSortedArrays(self, nums1, nums2):
+        """
+        :type nums1: List[int]
+        :type nums2: List[int]
+        :rtype: float
+        """
 
+        a = nums1
+        b = nums2
 
-def findMedianSortedArrays(self, nums1, nums2):
-    """
-    :type nums1: List[int]
-    :type nums2: List[int]
-    :rtype: float
-    """
+        aI = 0
+        bI = 0
+        aJ = len(nums1) - 1
+        bJ = len(nums2) - 1
 
-    a = nums1
-    b = nums2
-
-    aI = 0
-    bI = 0
-    aJ = len(nums1) - 1
-    bJ = len(nums2) - 1
-
-    if aJ < 0:
-        return (b[math.ceil((bI + bJ) / 2)] + b[math.floor((bI + bJ) / 2)]) / 2
-    elif bJ < 0:
-        return (a[math.ceil((aI + aJ) / 2)] + a[math.floor((aI + aJ) / 2)]) / 2
-
-    if (aJ == aI and bJ == bI):
-        return (a[aI] + b[bI]) / 2
-
-    while 1:
-        if a[aJ] >= b[bJ]:
-            aJ = aJ - 1
-        else:
-            bJ = bJ - 1
-
-        if a[aI] <= b[bI]:
-            aI = aI + 1
-        else:
-            bI = bI + 1
+        if aJ < 0:
+            return (b[math.ceil((bI + bJ) / 2)] + b[math.floor((bI + bJ) / 2)]) / 2
+        elif bJ < 0:
+            return (a[math.ceil((aI + aJ) / 2)] + a[math.floor((aI + aJ) / 2)]) / 2
 
         if (aJ == aI and bJ == bI):
             return (a[aI] + b[bI]) / 2
 
-        if aJ - aI < 0 or bJ - bI < 0:
-            break
+        while 1:
+            if a[aJ] >= b[bJ]:
+                aJ = aJ - 1
+            else:
+                bJ = bJ - 1
 
-    # print(aI,aJ, bI, bJ)
+            if a[aI] <= b[bI]:
+                aI = aI + 1
+            else:
+                bI = bI + 1
 
-    if aJ - aI < 0:
-        if (bI + bJ) % 2 == 0:
-            return b[int((bI + bJ) / 2)]
+            if (aJ == aI and bJ == bI):
+                return (a[aI] + b[bI]) / 2
+
+            if aJ - aI < 0 or bJ - bI < 0:
+                break
+
+        # print(aI,aJ, bI, bJ)
+
+        if aJ - aI < 0:
+            if (bI + bJ) % 2 == 0:
+                return b[int((bI + bJ) / 2)]
+            else:
+                return (b[math.ceil((bI + bJ) / 2)] + b[math.floor((bI + bJ) / 2)]) / 2
         else:
-            return (b[math.ceil((bI + bJ) / 2)] + b[math.floor((bI + bJ) / 2)]) / 2
-    else:
-        if (aI + aJ) % 2 == 0:
-            return a[int((aI + aJ) / 2)]
-        else:
-            return (a[math.ceil((aI + aJ) / 2)] + a[math.floor((aI + aJ) / 2)]) / 2
+            if (aI + aJ) % 2 == 0:
+                return a[int((aI + aJ) / 2)]
+            else:
+                return (a[math.ceil((aI + aJ) / 2)] + a[math.floor((aI + aJ) / 2)]) / 2
+
+    # Problem 813
+    def largestSumOfAverages(self, A: List[int], K: int) -> float:
+
+        dp = [[0] * len(A) for i in range(K)]
+        sum_num = [0 for i in range(len(A))]
+        sum_num[0] = A[0]
+        dp[0][0] = A[0]
+        for a in range(1, len(A)):
+            sum_num[a] = sum_num[a - 1] + A[a]
+            dp[0][a] = sum_num[a] / float(a + 1)
+        for k in range(1, K):
+            for i in range(k, len(A)):
+                dp[k][i] = max([dp[k - 1][j] + (sum_num[i] - sum_num[j]) / float(i - j) for j in range(i)])
+        return dp[-1][-1]
+
+    # Problem 1425
+    def constrainedSubsetSum(self, nums: List[int], k: int) -> int:
+        class maxQueue(list):
+
+            def __init__(self):
+                super().__init__()
+                self.max = None
+
+            def push(self, item):
+                if len(self) == 0:
+                    self.append(item)
+                    self.max = item
+                else:
+                    if item > self.max:
+                        self.insert(0, 2 * item - self.max)
+                        self.max = item
+                    else:
+                        self.insert(0, item)
+
+            def pope(self):
+                item = self.pop()
+                if (item > self.max):
+                    self.max = 2 * self.max - item
+
+        curmax = nums[0]
+        temp = maxQueue()
+        temp.push(nums[0])
+
+        for i in range(1, len(nums)):
+
+            cur = temp.max + nums[i]
+            temp.push(cur)
+            if (len(temp) > k):
+                temp.pope()
+
+            curmax = max(cur, curmax)
+
+        return curmax
 
 
 if __name__ == '__main__':
@@ -573,8 +652,15 @@ if __name__ == '__main__':
     # print(solution.findCircleNum([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
     # print(solution.findCircleNum([[1, 0, 0, 1], [0, 1, 1, 0], [0, 1, 1, 1], [1, 0, 1, 1]]))
 
-
     # print((solution.integerBreak(8)))
     # print(solution.maxProfit([1,2,3,0,2]))
+    #
+    # print(solution.constrainedSubsetSum([10, -2, -10, -5, 20], 2))
+    # print(solution.constrainedSubsetSum([10, 2, -10, 5, 20], 2))
+    # print(solution.constrainedSubsetSum(
+    #     [-5266, 4019, 7336, -3681, -5767]
+    #     , 2))
+    # print(solution.topKFrequent([1, 1, 1, 2, 2, 3], 2))
 
-    print(solution.topKFrequent([1,1,1,2,2,3], 2))
+    # print(solution.largestSumOfAverages([9, 1, 2, 3, 9], 3))
+    print(solution.findMin([2,1]))
